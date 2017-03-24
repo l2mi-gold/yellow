@@ -76,7 +76,13 @@ class DataManager(data_manager.DataManager):
     # Affiche le profil de l'utilisateur (note qu'a mis l'utilisateur aux films qu'il a vu par rapport à la note moyenne attribuée à ces films)
     
     def ShowUserProfile(self, userId):
-        sort_data = self.data.sort_values(by=['movie_id'], ascending=[True])
+        datadir = '../public_data/'                        # Change this to the directory where you put the input data
+        dataname = 'movierec'
+        basename = datadir  + dataname
+        import data_io
+        reload(data_io)
+        data = data_io.read_as_df(basename)  
+        sort_data = data.sort_values(by=['movie_id'], ascending=[True])
         user = sort_data['user_id'] == userId
         final_data = sort_data[user]
         plt.plot(final_data['movie_id'], final_data['target'], c='red')
@@ -140,3 +146,4 @@ if __name__=="__main__":
     
     D.DataStats('train')
     D.ShowScatter(1, 2, 'train')
+    D.ShowUserProfile(5103)
