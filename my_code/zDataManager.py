@@ -1,30 +1,7 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 """
-Created on Sat Mar 11 08:04:23 2017
-
-@author: isabelleguyon
-
-This is an example of program that reads data and has a few display methods.
-
-Add more views of the data getting inspired by previous lessons:
-    Histograms of single variables
-    Data matrix heat map
-    Correlation matric heat map
-
-Add methods of exploratory data analysis and visualization:
-    PCA or tSNE
-    two-way hierachical clustering (combine with heat maps)
-
-The same class could be used to visualize prediction results, by replacing X by
-the predicted values (the end of the transformation chain):
-    For regression, you can 
-        plot Y as a function of X.
-        plot the residual a function of X.
-    For classification, you can 
-        show the histograms of X for each Y value.
-        show ROC curves.
-    For both: provide a table of scores and error bars.
+Program that reads data and has a few display methods.
 """
 
 # Add the sample code in the path
@@ -32,6 +9,8 @@ mypath = "../sample_code"
 from sys import argv, path
 from os.path import abspath
 path.append(abspath(mypath))
+
+import matplotlib.pyplot as plt
 
 # Graphic routines
 import seaborn as sns; sns.set()
@@ -47,7 +26,65 @@ class DataManager(data_manager.DataManager):
        With class inheritance, we do not need to redefine the constructor,
        unless we want to add or change some data members.
        '''
-       
+
+    def UserRatingMovieID(self, userId, movieId):
+        film = self.data['movie_id'] == movieId
+        user = self.data['user_id'] == userId
+        
+        if(len(self.data[film & user]) > 0):
+            return self.data[film & user].iloc[0]['target']
+        else:
+            return 0 # l'utilisateur n'a pas noté ce film (trouver autre chose que 0)
+    
+    # Note moyenne d'un film
+    
+    def MovieAverageRating(self, movieId):
+        film = self.data['movie_id'] == movieId
+        total = 0;
+        for i in range(0, len(self.data[film])):
+            total += self.data[film].iloc[i]['target']
+        if len(self.data[film]) == 0: return 0
+        return total/len(self.data[film])
+    
+    # Moyenne qu'une certaine catégorie de personne a donnée à un film (sexe, job, âge...)
+    # Pour certaines catégorie il y a très peu de représentants (< 5), ce n'est donc pas très représentatif
+    
+    def CategoryAverageRatingMovieID(self, userCategory, movieId):
+        if not {userCategory}.issubset(self.data): return 0
+        category = self.data[userCategory] == 1
+        film = self.data['movie_id'] == movieId
+        total = 0;
+        for i in range(0, len(self.data[category & film])):
+            total += self.data[category & film].iloc[i]['target']
+        if len(self.data[category & film]) == 0: return 0
+        return total/len(self.data[category & film])
+
+    # Moyenne qu'une certaine catégorie de personne a donnée à une genre de film
+    # Pour certaines catégorie il y a très peu de représentants (< 5), ce n'est donc pas très représentatif
+    
+    def CategoryAverageRatingMovieGenre(self, userCategory, movieGenre):
+        if not {userCategory}.issubset(self.data): return 0
+        if not {movieGenre}.issubset(self.data): return 0
+        category = self.data[userCategory] == 1
+        genre = self.data[movieGenre] == 1
+        total = 0;
+        for i in range(0, len(self.data[category & genre])):
+            total += self.data[category & genre].iloc[i]['target']
+        if len(self.data[category & genre]) == 0: return 0
+        return total/len(self.data[category & genre])
+
+    # Affiche le profil de l'utilisateur (note qu'a mis l'utilisateur aux films qu'il a vu par rapport à la note moyenne attribuée à ces films)
+    
+    def ShowUserProfile(self, userId):
+        sort_data = self.data.sort_values(by=['movie_id'], ascending=[True])
+        user = sort_data['user_id'] == userId
+        final_data = sort_data[user]
+        plt.plot(final_data['movie_id'], final_data['target'], c='red')
+        plt.plot(final_data['movie_id'], final_data['movie_average_rating'], c='blue')
+        plt.legend(['User Rating', 'Movie Average Rating'])
+        plt.show()
+        return
+    
 #    def __init__(self, basename="", input_dir=""):
 #        ''' New contructor.'''
 #        DataManager.__init__(self, basename, input_dir)
