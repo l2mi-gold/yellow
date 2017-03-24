@@ -134,7 +134,7 @@ if __name__=="__main__":
     print("Using input_dir: " + input_dir)
     print("Using output_dir: " + output_dir)
     
-    basename = 'Iris'
+    basename = 'movierec'
     D = DataManager(basename, input_dir)
     print D
     
