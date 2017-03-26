@@ -28,61 +28,55 @@ class DataManager(data_manager.DataManager):
        '''
 
     def UserRatingMovieID(self, userId, movieId):
-        film = self.data['movie_id'] == movieId
-        user = self.data['user_id'] == userId
+        film = self.DF['movie_id'] == movieId
+        user = self.DF['user_id'] == userId
         
-        if(len(self.data[film & user]) > 0):
-            return self.data[film & user].iloc[0]['target']
+        if(len(self.DF[film & user]) > 0):
+            return self.DF[film & user].iloc[0]['target']
         else:
             return 0 # l'utilisateur n'a pas noté ce film (trouver autre chose que 0)
     
     # Note moyenne d'un film
     
     def MovieAverageRating(self, movieId):
-        film = self.data['movie_id'] == movieId
+        film = self.DF['movie_id'] == movieId
         total = 0;
-        for i in range(0, len(self.data[film])):
-            total += self.data[film].iloc[i]['target']
-        if len(self.data[film]) == 0: return 0
-        return total/len(self.data[film])
+        for i in range(0, len(self.DF[film])):
+            total += self.DF[film].iloc[i]['target']
+        if len(self.DF[film]) == 0: return 0
+        return total/len(self.DF[film])
     
     # Moyenne qu'une certaine catégorie de personne a donnée à un film (sexe, job, âge...)
     # Pour certaines catégorie il y a très peu de représentants (< 5), ce n'est donc pas très représentatif
     
     def CategoryAverageRatingMovieID(self, userCategory, movieId):
-        if not {userCategory}.issubset(self.data): return 0
-        category = self.data[userCategory] == 1
-        film = self.data['movie_id'] == movieId
+        if not {userCategory}.issubset(self.DF): return 0
+        category = self.DF[userCategory] == 1
+        film = self.DF['movie_id'] == movieId
         total = 0;
-        for i in range(0, len(self.data[category & film])):
-            total += self.data[category & film].iloc[i]['target']
-        if len(self.data[category & film]) == 0: return 0
-        return total/len(self.data[category & film])
+        for i in range(0, len(self.DF[category & film])):
+            total += self.DF[category & film].iloc[i]['target']
+        if len(self.DF[category & film]) == 0: return 0
+        return total/len(self.DF[category & film])
 
     # Moyenne qu'une certaine catégorie de personne a donnée à une genre de film
     # Pour certaines catégorie il y a très peu de représentants (< 5), ce n'est donc pas très représentatif
     
     def CategoryAverageRatingMovieGenre(self, userCategory, movieGenre):
-        if not {userCategory}.issubset(self.data): return 0
-        if not {movieGenre}.issubset(self.data): return 0
-        category = self.data[userCategory] == 1
-        genre = self.data[movieGenre] == 1
+        if not {userCategory}.issubset(self.DF): return 0
+        if not {movieGenre}.issubset(self.DF): return 0
+        category = self.DF[userCategory] == 1
+        genre = self.DF[movieGenre] == 1
         total = 0;
-        for i in range(0, len(self.data[category & genre])):
-            total += self.data[category & genre].iloc[i]['target']
-        if len(self.data[category & genre]) == 0: return 0
-        return total/len(self.data[category & genre])
+        for i in range(0, len(self.DF[category & genre])):
+            total += self.DF[category & genre].iloc[i]['target']
+        if len(self.DF[category & genre]) == 0: return 0
+        return total/len(self.DF[category & genre])
 
     # Affiche le profil de l'utilisateur (note qu'a mis l'utilisateur aux films qu'il a vu par rapport à la note moyenne attribuée à ces films)
     
     def ShowUserProfile(self, userId):
-        datadir = '../public_data/'                        # Change this to the directory where you put the input data
-        dataname = 'movierec'
-        basename = datadir  + dataname
-        import data_io
-        reload(data_io)
-        data = data_io.read_as_df(basename)  
-        sort_data = data.sort_values(by=['movie_id'], ascending=[True])
+        sort_data = self.DF.sort_values(by=['movie_id'], ascending=[True])
         user = sort_data['user_id'] == userId
         final_data = sort_data[user]
         plt.plot(final_data['movie_id'], final_data['target'], c='red')
@@ -120,13 +114,6 @@ class DataManager(data_manager.DataManager):
             sns.pairplot(DF.ix[:, [var1, var2, "target"]], hue="target")
         else:
             sns.pairplot(DF.ix[:, [var1, var2]])
-
-    def ShowSomethingElse(self):
-        ''' Surprise me.'''
-        # This does not need to be finished and tested code.
-        # A sketch with what you intend to do written in English (or French) is OK.
-        pass
-    
 
 if __name__=="__main__":
     # We can use this to run this file as a script and test the DataManager
