@@ -1,6 +1,6 @@
 import numpy as np
 from zDataManager import DataManager
-from zClassifier import Classifier
+from zRegressor import Regressor
 from sklearn.metrics import accuracy_score 
 from sklearn.model_selection import cross_val_score
 

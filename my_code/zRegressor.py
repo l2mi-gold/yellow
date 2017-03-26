@@ -5,6 +5,7 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.ensemble import BaggingClassifier, VotingClassifier
 from sklearn.pipeline import Pipeline
 from sklearn.tree import DecisionTreeRegressor
+from sklearn.linear_model import LinearRegression
 import pickle
 
 
