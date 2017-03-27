@@ -35,7 +35,6 @@ class DataManager:
 		x.getInfo (filename) -> void		
 		Fill the dictionary with an info file. Each line of the info file must have this format 'feature' : value
 		The information is obtained from the public.info file if it exists, or inferred from the data files		
-
 	getInfoFromFile (...)
 		x.getInfoFromFile (filename) -> void		
 		Fill the dictionary with an info file. Each line of the info file must have this format 'feature' : value
@@ -60,7 +59,7 @@ class DataManager:
    		if basename in input_dir or os.path.isfile(os.path.join(input_dir, basename + '_train.data')) :
 			self.input_dir = input_dir 
    		else:
-			self.input_dir =  os.path.join (input_dir , basename ) 
+			self.input_dir =  os.path.join (input_dir , basename )
 		if self.use_pickle:
 			if os.path.exists ("tmp"):
 				self.tmp_dir = "tmp"
@@ -73,7 +72,8 @@ class DataManager:
 		self.info = {}
 		self.getInfo (info_file)
 		self.feat_type = self.loadType (os.path.join(self.input_dir, basename + '_feat.type'), verbose=verbose)
-		self.data = {}  
+		self.data = {}
+		self.DF = self.loadDataAsDF()
   		#if True: return
 		Xtr = self.loadData (os.path.join(self.input_dir, basename + '_train.data'), verbose=verbose, replace_missing=replace_missing)
 		Ytr = self.loadLabel (os.path.join(self.input_dir, basename + '_train.solution'), verbose=verbose)
@@ -145,6 +145,14 @@ class DataManager:
 		if verbose:  print( "[+] Success in %5.2f sec" % (end - start))
 		return data
 	
+	def loadDataAsDF (self):
+		dataname = 'movierec'
+		datadir = 'public_data/'
+		basename = datadir + dataname
+		reload(data_io)
+		DF = data_io.read_as_df(basename)
+		return DF
+			
 	def loadLabel (self, filename, verbose=True):
 		''' Get the solution/truth values'''
 		if verbose:  print("========= Reading " + filename)
