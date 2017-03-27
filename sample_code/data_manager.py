@@ -59,7 +59,7 @@ class DataManager:
    		if basename in input_dir or os.path.isfile(os.path.join(input_dir, basename + '_train.data')) :
 			self.input_dir = input_dir 
    		else:
-			self.input_dir =  os.path.join (input_dir , basename ) 
+			self.input_dir =  os.path.join (input_dir , basename )
 		if self.use_pickle:
 			if os.path.exists ("tmp"):
 				self.tmp_dir = "tmp"
@@ -147,7 +147,7 @@ class DataManager:
 	
 	def loadDataAsDF (self):
 		dataname = 'movierec'
-		datadir = '../public_data/'
+		datadir = 'public_data/'
 		basename = datadir + dataname
 		reload(data_io)
 		DF = data_io.read_as_df(basename)

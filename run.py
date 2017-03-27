@@ -96,9 +96,9 @@ overwrite_output = True # save space
 # Use default location for the input and output data:
 # If no arguments to run.py are provided, this is where the data will be found
 # and the results written to. Change the root_dir to your local directory.
-root_dir = "/Users/isabelleguyon/Documents/Projects/ParisSaclay/Projects/ChaLab/Examples/iris/"
-default_input_dir = root_dir + "input_data_1_2/"
-default_output_dir = root_dir + "scoring_input_1_2/res"
+root_dir = "/home/kmd/L2MI/MiniProjet/yellow-git/"
+default_input_dir = root_dir + "public_data/"
+default_output_dir = root_dir + "outputs/"
 
 # =============================================================================
 # =========================== END USER OPTIONS ================================
