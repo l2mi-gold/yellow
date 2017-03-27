@@ -7,7 +7,7 @@ Preprocessor class by Gold team
 
 from sys import argv
 from sklearn.base import BaseEstimator
-import data_manager #The class provided by binome 1
+import zDataManager #The class provided by binome 1
 # Note: if zDataManager is not ready, use the mother class DataManager
 from sklearn.decomposition import PCA
 from sklearn.feature_selection import SelectKBest, chi2
@@ -15,28 +15,31 @@ import numpy as np
 from sklearn.preprocessing import MinMaxScaler
 
 
-
 class Preprocessor(BaseEstimator):
-    def __init__(self):
-        self.transformer = PCA(n_components=2)
+ def __init__(self):
+        self.transformer = PCA(n_components=20)
+        self.selector = SelectKBest(chi2, k=30) #k is number of features.
+        self.minmax = MinMaxScaler()
 
     def fit(self, X, y=None):
         return self.transformer.fit(X, y)
 
     def fit_transform(self, X, y=None):
-        self.transformer.fit(X, y)
         # adding 'genCoef' feature
-        X = np.hstack((X, np.subtract(X[:,51], X[:, 52]).reshape(105000, 1)))
-        # we cannot have negative values for SelectKBest + standarization
-        minmax = MinMaxScaler()
-        X = minmax.fit_transform(X)
+        X = np.hstack((X, np.divide(X[:,51], X[:, 52]).reshape(X.shape[0], 1)))
+        #  standarization
+        X = self.minmax.fit_transform(X)
         # we select best k features
-        selectBest = SelectKBest(chi2, k=30) #k is number of features.
-        X = selectBest.fit_transform(X, y)
-        return X
+        X = self.selector.fit_transform(X, y)
+        # on applique PCA
+        self.transformer.fit(X, y)
+        return self.transformer.transform(X)
 
 
     def transform(self, X, y=None):
+        X = np.hstack((X, np.divide(X[:,51], X[:, 52]).reshape(X.shape[0], 1)))
+        X = self.minmax.transform(X)
+        X = self.selector.transform(X)
         return self.transformer.transform(X)
 
 if __name__=="__main__":
@@ -49,7 +52,7 @@ if __name__=="__main__":
         output_dir = argv[2];
 
     basename = 'movierec'
-    D = data_manager.DataManager(basename, input_dir) # Load data
+    D = zDataManager.DataManager(basename, input_dir) # Load data
     print("*** Original data ***")
     print D
 
