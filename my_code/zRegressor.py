@@ -11,19 +11,20 @@ import pickle
 
 class Regressor(BaseEstimator):
 	def __init__(self):
-		self.clf = VotingClassifier(estimators=[
-                ('basic1', DecisionTreeRegressor()), 
-                ('basic2', LinearRegression())], 
-                voting='soft')  
+		self.clf = 	VotingClassifier(estimators=[
+					('basic1', DecisionTreeRegressor()), 
+					('basic2', LinearRegression())], 
+					voting='soft')
 
 	def fit(self, X, y):
-		self.clf.fit(X, y)
+		return self.clf.fit(X, y)
 
 	def predict(self, X):
 		return self.clf.predict(X)
 
 	def predict_proba(self, X):
-		return self.clf.predict_proba(X) # The classes are in the order of the labels returned by get_classes
+		# The classes are in the order of the labels returned by get_classes
+		return self.clf.predict_proba(X)
 
 	def get_classes(self):
 		return self.clf.classes_
