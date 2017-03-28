@@ -1,30 +1,39 @@
 from sklearn.base import BaseEstimator
-from zPreprocessor import Preprocessor
 
-from sklearn.naive_bayes import GaussianNB
-from sklearn.ensemble import BaggingClassifier, VotingClassifier
-from sklearn.pipeline import Pipeline
-from sklearn.tree import DecisionTreeRegressor
-from sklearn.linear_model import LinearRegression
+# Pour DecisionTreeRegressor()
+#from sklearn.tree import DecisionTreeRegressor
+
+# Pour linear_model.SGDRegressor()
+from sklearn import linear_model
+
+# Pour BaggingRegressor()
+#from sklearn.utils import check_random_state
+#from sklearn.ensemble import BaggingRegressor
+
 import pickle
 
 
 class Regressor(BaseEstimator):
 	def __init__(self):
-		self.clf = 	VotingClassifier(estimators=[
-					('basic1', DecisionTreeRegressor()), 
-					('basic2', LinearRegression())], 
-					voting='soft')
+		pass
 
 	def fit(self, X, y):
-		return self.clf.fit(X, y)
+		#self.clf = DecisionTreeRegressor()
+		self.clf = linear_model.SGDRegressor()
+		#rng = check_random_state(0)
+		#self.clf = BaggingRegressor(base_estimator=DecisionTreeRegressor(),
+         #                  n_estimators=20,
+         #                  bootstrap=True,
+         #                  oob_score=True,
+         #                  random_state=rng)
+
+		self.clf.fit(X, y)
 
 	def predict(self, X):
 		return self.clf.predict(X)
 
 	def predict_proba(self, X):
-		# The classes are in the order of the labels returned by get_classes
-		return self.clf.predict_proba(X)
+		return self.clf.predict_proba(X) # The classes are in the order of the labels returned by get_classes
 
 	def get_classes(self):
 		return self.clf.classes_
