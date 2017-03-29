@@ -17,9 +17,9 @@ from sklearn.preprocessing import MinMaxScaler
 
 class Preprocessor(BaseEstimator):
 	def __init__(self):
-		self.transformer = PCA(n_components=20)
+		self.transformer = PCA(n_components=50)
 		#k is number of features.
-		self.selector = SelectKBest(chi2, k=30)
+		self.selector = SelectKBest(chi2, k=50)
 		self.minmax = MinMaxScaler()
 		# self.scaling =
 
@@ -61,6 +61,7 @@ if __name__=="__main__":
 
 	# Preprocess on the data and load it back into D
 	D.data['X_train'] = Prepro.fit_transform(D.data['X_train'], D.data['Y_train'])
+	print type(D.data['X_train'])
 	D.data['X_valid'] = Prepro.transform(D.data['X_valid'])
 	D.data['X_test'] = Prepro.transform(D.data['X_test'])
 
