@@ -21,6 +21,7 @@ class Preprocessor(BaseEstimator):
 		#k is number of features.
 		self.selector = SelectKBest(chi2, k=30)
 		self.minmax = MinMaxScaler()
+		# self.scaling =
 
 	def fit(self, X, y=None):
 		return self.transformer.fit(X, y)
