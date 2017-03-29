@@ -4,11 +4,21 @@ from sklearn.base import BaseEstimator
 #from sklearn.tree import DecisionTreeRegressor
 
 # Pour linear_model.SGDRegressor()
-from sklearn import linear_model
+#from sklearn import linear_model
 
 # Pour BaggingRegressor()
 #from sklearn.utils import check_random_state
 #from sklearn.ensemble import BaggingRegressor
+
+# Pour AdaBoostRegressor()
+#import numpy as np
+#from sklearn.ensemble import AdaBoostRegressor
+
+# Pour ExtraTreesRegressor()
+#from sklearn.ensemble import ExtraTreesRegressor
+
+# Pour RandomForestRegressor()
+from sklearn.ensemble.forest import RandomForestRegressor
 
 import pickle
 
@@ -19,13 +29,23 @@ class Regressor(BaseEstimator):
 
 	def fit(self, X, y):
 		#self.clf = DecisionTreeRegressor()
-		self.clf = linear_model.SGDRegressor()
+
+		#self.clf = linear_model.SGDRegressor()
+
 		#rng = check_random_state(0)
 		#self.clf = BaggingRegressor(base_estimator=DecisionTreeRegressor(),
-         #                  n_estimators=20,
+         #                  n_estimators=5,
          #                  bootstrap=True,
          #                  oob_score=True,
          #                  random_state=rng)
+
+		#rng = np.random.RandomState(1)
+		#self.clf = AdaBoostRegressor(DecisionTreeRegressor(max_depth=4),
+		#			n_estimators=100, random_state=rng)
+
+		#self.clf = ExtraTreesRegressor(20)
+
+		self.clf = RandomForestRegressor(20)
 
 		self.clf.fit(X, y)
 
@@ -33,7 +53,8 @@ class Regressor(BaseEstimator):
 		return self.clf.predict(X)
 
 	def predict_proba(self, X):
-		return self.clf.predict_proba(X) # The classes are in the order of the labels returned by get_classes
+		# The classes are in the order of the labels returned by get_classes
+		return self.clf.predict_proba(X)
 
 	def get_classes(self):
 		return self.clf.classes_
