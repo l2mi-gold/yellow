@@ -10,10 +10,11 @@ from sys import argv, path
 from os.path import abspath
 path.append(abspath(mypath))
 
-import matplotlib.pyplot as plt
+import zPreprocessor
 
-# Graphic routines
+import matplotlib.pyplot as plt
 import seaborn as sns; sns.set()
+import numpy as np
 
 # Data types
 import pandas as pd
@@ -26,7 +27,7 @@ class DataManager(data_manager.DataManager):
        With class inheritance, we do not need to redefine the constructor,
        unless we want to add or change some data members.
        '''
-
+       
     def UserRatingMovieID(self, userId, movieId):
         film = self.DF['movie_id'] == movieId
         user = self.DF['user_id'] == userId
@@ -34,7 +35,7 @@ class DataManager(data_manager.DataManager):
         if(len(self.DF[film & user]) > 0):
             return self.DF[film & user].iloc[0]['target']
         else:
-            return 0 # l'utilisateur n'a pas noté ce film (trouver autre chose que 0)
+            return 0 # l'utilisateur n'a pas noté ce film
     
     # Note moyenne d'un film
     
@@ -85,11 +86,45 @@ class DataManager(data_manager.DataManager):
         plt.show()
         return
     
-#    def __init__(self, basename="", input_dir=""):
-#        ''' New contructor.'''
-#        DataManager.__init__(self, basename, input_dir)
-        # So something here
+    # Show Correlation Matrix before and after PCA
     
+    def ShowCorrelationMatrix(self):
+        Prepro = zPreprocessor.Preprocessor()
+        # Don't change self
+        D = self
+        d = self.toDF('train')
+        corr = d.corr()
+        # Generate a mask for the upper triangle
+        mask = np.zeros_like(corr, dtype=np.bool)
+        mask[np.triu_indices_from(mask)] = True
+        # Set up the matplotlib figure
+        f, ax = plt.subplots(figsize=(11, 9))
+        sns.set(style="white")
+        # Generate a custom diverging colormap
+        cmap = sns.diverging_palette(220, 10, as_cmap=True)
+        # Draw the heatmap with the mask and correct aspect ratio
+        sns.heatmap(corr, mask=mask, cmap=cmap, vmax=.3,
+                    square=True, xticklabels=5, yticklabels=5,
+                    linewidths=.5, cbar_kws={"shrink": .5}, ax=ax)
+        # Preprocess on the data and load it back into D (Apply PCA)
+        D.data['X_train'] = Prepro.fit_transform(D.data['X_train'], D.data['Y_train'])
+        D.data['X_valid'] = Prepro.transform(D.data['X_valid'])
+        D.data['X_test'] = Prepro.transform(D.data['X_test'])
+        DF = pd.DataFrame(D.data['X_train'])
+        Y = D.data['Y_train']
+        DF = DF.assign(target=Y)
+        corr1 = DF.corr()
+        # Set up the matplotlib figure
+        f1, ax1 = plt.subplots(figsize=(11, 9))
+        # Generate a custom diverging colormap
+        cmap1 = sns.diverging_palette(220, 10, as_cmap=True)
+        # Draw the heatmap with the mask and correct aspect ratio
+        sns.heatmap(corr1, cmap=cmap1, vmax=.3,
+                    square=True, xticklabels=5, yticklabels=5,
+                    linewidths=.5, cbar_kws={"shrink": .5}, ax=ax1)
+        sns.plt.show()
+        return
+        
     def toDF(self, set_name):
         ''' Change a given data subset to a data Panda's frame.
             set_name is 'train', 'valid' or 'test'.'''
@@ -130,7 +165,3 @@ if __name__=="__main__":
     basename = 'movierec'
     D = DataManager(basename, input_dir)
     print D
-    
-    D.DataStats('train')
-    D.ShowScatter(1, 2, 'train')
-    D.ShowUserProfile(5103)

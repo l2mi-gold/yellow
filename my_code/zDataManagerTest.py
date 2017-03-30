@@ -13,8 +13,10 @@ D = DataManager(basename, input_dir)
 print D
     
 D.DataStats('train')
-D.ShowScatter(1, 2, 'train')
+#D.ShowScatter(1, 2, 'train')
 D.ShowUserProfile(5103)
+D.ShowCorrelationMatrix()
+
 
 assert D.UserRatingMovieID(100000, 100000) == 0
 
