@@ -1,21 +1,21 @@
 from sklearn.base import BaseEstimator
 
 # Pour DecisionTreeRegressor()
-#from sklearn.tree import DecisionTreeRegressor
+from sklearn.tree import DecisionTreeRegressor
 
 # Pour linear_model.SGDRegressor()
-#from sklearn import linear_model
+from sklearn import linear_model
 
 # Pour BaggingRegressor()
-#from sklearn.utils import check_random_state
-#from sklearn.ensemble import BaggingRegressor
+from sklearn.utils import check_random_state
+from sklearn.ensemble import BaggingRegressor
 
 # Pour AdaBoostRegressor()
-#import numpy as np
-#from sklearn.ensemble import AdaBoostRegressor
+import numpy as np
+from sklearn.ensemble import AdaBoostRegressor
 
 # Pour ExtraTreesRegressor()
-#from sklearn.ensemble import ExtraTreesRegressor
+from sklearn.ensemble import ExtraTreesRegressor
 
 # Pour RandomForestRegressor()
 from sklearn.ensemble.forest import RandomForestRegressor
@@ -27,25 +27,38 @@ class Regressor(BaseEstimator):
 	def __init__(self):
 		pass
 
-	def fit(self, X, y):
-		#self.clf = DecisionTreeRegressor()
+	def fit(self, X, y, nRegr=1):
+		if (nRegr < 1) or (nRegr > 6):
+			print "Regressor choice not correct, must be in [1-6]"
+			if nRegr < 1:
+				nRegr = 1
+			if nRegr > 6:
+				nRegr = 6
 
-		#self.clf = linear_model.SGDRegressor()
+		if nRegr == 1:
+			self.clf = DecisionTreeRegressor()
 
-		#rng = check_random_state(0)
-		#self.clf = BaggingRegressor(base_estimator=DecisionTreeRegressor(),
-         #                  n_estimators=5,
-         #                  bootstrap=True,
-         #                  oob_score=True,
-         #                  random_state=rng)
+		if nRegr == 2:
+			self.clf = linear_model.SGDRegressor()
 
-		#rng = np.random.RandomState(1)
-		#self.clf = AdaBoostRegressor(DecisionTreeRegressor(max_depth=4),
-		#			n_estimators=100, random_state=rng)
+		if nRegr == 3:
+			rng = check_random_state(0)
+			self.clf = BaggingRegressor(base_estimator=DecisionTreeRegressor(),
+							n_estimators=5,
+							bootstrap=True,
+							oob_score=True,
+							random_state=rng)
 
-		#self.clf = ExtraTreesRegressor(20)
+		if nRegr == 4:
+			rng = np.random.RandomState(1)
+			self.clf = AdaBoostRegressor(DecisionTreeRegressor(max_depth=4),
+							n_estimators=100, random_state=rng)
 
-		self.clf = RandomForestRegressor(20)
+		if nRegr == 5:
+			self.clf = ExtraTreesRegressor(20)
+
+		if nRegr == 6:
+			self.clf = RandomForestRegressor(20)
 
 		self.clf.fit(X, y)
 

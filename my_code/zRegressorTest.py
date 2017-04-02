@@ -21,7 +21,7 @@ print D
 myregressor = Regressor()
  
 Ytrue_tr = D.data['Y_train']
-myregressor.fit(D.data['X_train'], Ytrue_tr)
+myregressor.fit(D.data['X_train'], Ytrue_tr, 6)
 
 Ypred_tr = myregressor.predict(D.data['X_train'])
 Ypred_va = myregressor.predict(D.data['X_valid'])
@@ -60,6 +60,6 @@ for idx_t, idx_v in skf:
     Xva = X_train.iloc[idx_v]
     Yva = y_train[idx_v]
     clf = Regressor()
-    clf.fit(Xtr, Ytr)
+    clf.fit(Xtr, Ytr, 6)
     Y_predict = clf.predict(Xva)
     print 'Fold', i, 'validation accuracy (MAE) = ', eval.mae(Y_predict, Yva)
