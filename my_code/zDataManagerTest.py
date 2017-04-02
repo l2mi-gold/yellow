@@ -19,6 +19,8 @@ D.ShowUserProfile(5113)
 D.ShowUserProfile(4104)
 D.ShowCorrelationMatrix()
 
+print(D.CategoryAverageRating('age_18-24', 5, movieId=3174))
+
 assert D.UserRatingMovieID(100000, 100000) == 0
 
 # MovieAverageRating :
@@ -26,24 +28,15 @@ assert D.UserRatingMovieID(100000, 100000) == 0
 # Selection inexistante
 assert D.MovieAverageRating(100000) == 0
 
-# CategoryAverageRatingMovieID :
+# CategoryAverageRating :
 
 # Category inexistante :
-assert D.CategoryAverageRatingMovieID('test', 3174) == 0
+assert D.CategoryAverageRating('test', 5, movieId=3174) == 0
 # Film inexistant :
-assert D.CategoryAverageRatingMovieID('job_other', 100000) == 0
-# Moyenne inférieur à 5
-assert D.CategoryAverageRatingMovieID('job_other', 3174) <= 5
-# Moyenne supérieur à 0
-assert D.CategoryAverageRatingMovieID('job_other', 3174) >= 0
-
-# CategoryAverageRatingMovieGenre :
-
-# Category inexistante :
-assert D.CategoryAverageRatingMovieGenre('test', 'movie_genre_Sci-Fi') == 0
+assert D.CategoryAverageRating('job_other', 5, movieId=100000) == 0
 # Genre inexistant :
-assert D.CategoryAverageRatingMovieGenre('age_18-24', 'test') == 0
+assert D.CategoryAverageRating('age_18-24', 5, movieGenre='test') == 0
 # Moyenne inférieur à 5
-assert D.CategoryAverageRatingMovieGenre('age_18-24', 'movie_genre_Sci-Fi') <= 5
+assert D.CategoryAverageRating('job_other', 5, movieId=3174) <= 5
 # Moyenne supérieur à 0
-assert D.CategoryAverageRatingMovieGenre('age_18-24', 'movie_genre_Sci-Fi') >= 0
+assert D.CategoryAverageRating('job_other', 5, movieId=3174) >= 0

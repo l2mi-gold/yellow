@@ -27,7 +27,33 @@ class DataManager(data_manager.DataManager):
        With class inheritance, we do not need to redefine the constructor,
        unless we want to add or change some data members.
        '''
-       
+	
+    # Moyenne qu'une certaine catégorie de personne a donnée à un film ou à un genre de film (sexe, job, âge...)
+    # Pour certaines catégorie il y a très peu de représentants (< 5), ce n'est donc pas très représentatif
+    
+    def CategoryAverageRating(self, userCategory, limit, movieId=0, movieGenre=''):
+		if not {userCategory}.issubset(self.DF): return 0
+		if not {movieGenre}.issubset(self.DF) and movieGenre != '' : return 0
+		category = self.DF[userCategory] == 1
+		if(movieGenre != ''):
+			genre = self.DF[movieGenre] == 1
+		film = self.DF['movie_id'] == movieId
+		result = self.DF
+		if(movieId == 0 and movieGenre == ''):
+			result = self.DF[category]
+		elif(movieGenre == ''):
+			result = self.DF[category & film]
+		elif(movieId == 0):
+			result = self.DF[category & genre]
+		else:
+			result = self.DF[category & genre & film]
+		total = 0
+		for i in range(0, len(result)):
+			total += result.iloc[i]['target']
+		if len(result) == 0: return 0
+		if len(result) <= limit: print("WARNING: Le nombre de représentant pour vos paramètres est inférieur ou égal à votre seuil")
+		return total/len(result)
+		
     def UserRatingMovieID(self, userId, movieId):
         film = self.DF['movie_id'] == movieId
         user = self.DF['user_id'] == userId
@@ -46,33 +72,6 @@ class DataManager(data_manager.DataManager):
             total += self.DF[film].iloc[i]['target']
         if len(self.DF[film]) == 0: return 0
         return total/len(self.DF[film])
-    
-    # Moyenne qu'une certaine catégorie de personne a donnée à un film (sexe, job, âge...)
-    # Pour certaines catégorie il y a très peu de représentants (< 5), ce n'est donc pas très représentatif
-    
-    def CategoryAverageRatingMovieID(self, userCategory, movieId):
-        if not {userCategory}.issubset(self.DF): return 0
-        category = self.DF[userCategory] == 1
-        film = self.DF['movie_id'] == movieId
-        total = 0;
-        for i in range(0, len(self.DF[category & film])):
-            total += self.DF[category & film].iloc[i]['target']
-        if len(self.DF[category & film]) == 0: return 0
-        return total/len(self.DF[category & film])
-
-    # Moyenne qu'une certaine catégorie de personne a donnée à une genre de film
-    # Pour certaines catégorie il y a très peu de représentants (< 5), ce n'est donc pas très représentatif
-    
-    def CategoryAverageRatingMovieGenre(self, userCategory, movieGenre):
-        if not {userCategory}.issubset(self.DF): return 0
-        if not {movieGenre}.issubset(self.DF): return 0
-        category = self.DF[userCategory] == 1
-        genre = self.DF[movieGenre] == 1
-        total = 0;
-        for i in range(0, len(self.DF[category & genre])):
-            total += self.DF[category & genre].iloc[i]['target']
-        if len(self.DF[category & genre]) == 0: return 0
-        return total/len(self.DF[category & genre])
 
     # Affiche le profil de l'utilisateur (note qu'a mis l'utilisateur aux films qu'il a vu par rapport à la note moyenne attribuée à ces films)
     
@@ -136,7 +135,7 @@ class DataManager(data_manager.DataManager):
             Y = self.data['Y_train']
             DF = DF.assign(target=Y)          
         return DF
-
+        
     def DataStats(self, set_name):
         ''' Display simple data statistics'''
         DF = self.toDF(set_name)
@@ -149,7 +148,7 @@ class DataManager(data_manager.DataManager):
             sns.pairplot(DF.ix[:, [var1, var2, "target"]], hue="target")
         else:
             sns.pairplot(DF.ix[:, [var1, var2]])
-
+    
 if __name__=="__main__":
     # We can use this to run this file as a script and test the DataManager
     if len(argv)==1: # Use the default input and output directories if no arguments are provided
@@ -164,4 +163,5 @@ if __name__=="__main__":
     
     basename = 'movierec'
     D = DataManager(basename, input_dir)
+    
     print D
