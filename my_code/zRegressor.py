@@ -27,7 +27,7 @@ class Regressor(BaseEstimator):
 	def __init__(self):
 		pass
 
-	def fit(self, X, y, nRegr=1):
+	def fit(self, X, y, nRegr=1, nEst=5):
 		if (nRegr < 1) or (nRegr > 6):
 			print "Regressor choice not correct, must be in [1-6]"
 			if nRegr < 1:
@@ -44,7 +44,7 @@ class Regressor(BaseEstimator):
 		if nRegr == 3:
 			rng = check_random_state(0)
 			self.clf = BaggingRegressor(base_estimator=DecisionTreeRegressor(),
-							n_estimators=5,
+							n_estimators=nEst,
 							bootstrap=True,
 							oob_score=True,
 							random_state=rng)
@@ -52,13 +52,13 @@ class Regressor(BaseEstimator):
 		if nRegr == 4:
 			rng = np.random.RandomState(1)
 			self.clf = AdaBoostRegressor(DecisionTreeRegressor(max_depth=4),
-							n_estimators=100, random_state=rng)
+							n_estimators=nEst, random_state=rng)
 
 		if nRegr == 5:
-			self.clf = ExtraTreesRegressor(20)
+			self.clf = ExtraTreesRegressor(nEst)
 
 		if nRegr == 6:
-			self.clf = RandomForestRegressor(20)
+			self.clf = RandomForestRegressor(nEst)
 
 		self.clf.fit(X, y)
 

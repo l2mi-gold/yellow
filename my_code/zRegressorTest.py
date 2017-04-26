@@ -10,6 +10,7 @@ from zRegressor import Regressor
 from sklearn.metrics import accuracy_score 
 from sklearn.model_selection import cross_val_score
 from sklearn.cross_validation import StratifiedShuffleSplit
+from sklearn.metrics import mean_absolute_error
 
 input_dir = "../public_data"
 output_dir = "../res"
@@ -28,7 +29,6 @@ Ypred_va = myregressor.predict(D.data['X_valid'])
 Ypred_te = myregressor.predict(D.data['X_test'])  
 
 acc_tr = accuracy_score(Ytrue_tr, Ypred_tr)
-
 acc_cv = cross_val_score(myregressor, D.data['X_train'], Ytrue_tr, cv=5, scoring='accuracy')
 
 print "Training Accuracy = %5.2f +-%5.2f" % (acc_tr.mean(), acc_tr.std())
@@ -40,7 +40,7 @@ datadir = '../public_data/'
 dataname = 'movierec'
 basename = datadir  + dataname
 import data_io
-import eval
+#import eval
 reload(data_io)
 data = data_io.read_as_df(basename)
 # Data matrix you already loaded (training data)
@@ -60,6 +60,7 @@ for idx_t, idx_v in skf:
     Xva = X_train.iloc[idx_v]
     Yva = y_train[idx_v]
     clf = Regressor()
-    clf.fit(Xtr, Ytr, 6)
+    clf.fit(Xtr, Ytr, 1, 1)
     Y_predict = clf.predict(Xva)
-    print 'Fold', i, 'validation accuracy (MAE) = ', eval.mae(Y_predict, Yva)
+    print 'Fold', i, 'mae = ', mean_absolute_error(Yva, Y_predict), ', mad = ', eval.mae(Y_predict, Yva)
+    # print 'Fold', i, 'validation accuracy (MAE) = ', eval.mae(Y_predict, Yva)
