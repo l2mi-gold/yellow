@@ -4,12 +4,13 @@ from sys import path
 from os.path import abspath
 path.append(abspath(mypath))
 
-#import numpy as np
+import numpy as np
 from zDataManager import DataManager
 from zRegressor import Regressor
 from sklearn.metrics import accuracy_score 
 from sklearn.model_selection import cross_val_score
 from sklearn.cross_validation import StratifiedShuffleSplit
+from sklearn.model_selection import KFold
 from sklearn.metrics import mean_absolute_error
 
 input_dir = "../public_data"
@@ -40,7 +41,7 @@ datadir = '../public_data/'
 dataname = 'movierec'
 basename = datadir  + dataname
 import data_io
-#import eval
+import eval
 reload(data_io)
 data = data_io.read_as_df(basename)
 # Data matrix you already loaded (training data)
@@ -51,9 +52,10 @@ print 'Dimensions X_train=', X_train.shape, 'y_train=', y_train.shape
 X_valid = data_io.read_as_df(basename, 'valid')
 X_test = data_io.read_as_df(basename, 'test')
 # This is just an example of 2-fold cross-validation
-skf = StratifiedShuffleSplit(y_train, n_iter=5, test_size=0.5, random_state=0)
+#skf = StratifiedShuffleSplit(y_train, n_iter=5, test_size=0.5, random_state=0)
+crvd = KFold(n_splits=5)
 i=0
-for idx_t, idx_v in skf:
+for idx_t, idx_v in crvd.split(X_train):
     i=i+1
     Xtr = X_train.iloc[idx_t]
     Ytr = y_train[idx_t]
@@ -62,5 +64,5 @@ for idx_t, idx_v in skf:
     clf = Regressor()
     clf.fit(Xtr, Ytr, 1, 1)
     Y_predict = clf.predict(Xva)
-    print 'Fold', i, 'mae = ', mean_absolute_error(Yva, Y_predict), ', mad = ', eval.mae(Y_predict, Yva)
+    print 'Fold', i, 'mae = ', mean_absolute_error(Yva, Y_predict), ', mae = ', eval.mae(Y_predict, Yva)
     # print 'Fold', i, 'validation accuracy (MAE) = ', eval.mae(Y_predict, Yva)
