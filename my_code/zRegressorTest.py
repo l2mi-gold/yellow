@@ -68,3 +68,17 @@ for idx_t, idx_v in crvd.split(X_train):
     # print 'Fold', i, 'validation accuracy (MAE) = ', eval.mae(Y_predict, Yva)
     a=Y_predict-Yva
     print 'Fold', i, 'mad = ', np.median(np.abs(a-np.median(a)))
+    
+    for i in range(1,7) :
+        a= time.time()+600
+        x= 0
+        while(time.time()<a) :
+           x+=1
+           myregressor = Regressor()
+           Ytrue_tr = D.data['Y_train']
+           myregressor.fit(D.data['X_train'], Ytrue_tr, i,x)
+
+           Ypred_tr = myregressor.predict(D.data['X_train'])
+           Ypred_va = myregressor.predict(D.data['X_valid'])
+           Ypred_te = myregressor.predict(D.data['X_test'])
+        
