@@ -66,3 +66,5 @@ for idx_t, idx_v in crvd.split(X_train):
     Y_predict = clf.predict(Xva)
     print 'Fold', i, 'mae = ', mean_absolute_error(Yva, Y_predict), ', mae = ', eval.mae(Y_predict, Yva)
     # print 'Fold', i, 'validation accuracy (MAE) = ', eval.mae(Y_predict, Yva)
+    a=Y_predict-Yva
+    print 'Fold', i, 'mad = ', np.median(np.abs(a-np.median(a)))
